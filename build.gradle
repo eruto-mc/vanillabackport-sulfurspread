@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7.38'
+    }
+}
+
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+version = '1.0.0'
+group = 'net.erutobusiness'
+base { archivesName = 'vanillabackport_sulfurspread' }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+}
+
+mixin {
+    add sourceSets.main, 'sulfurspread.refmap.json'
+    config 'sulfurspread.mixins.json'
+}
+
+repositories {
+    // MOD の依存を取る maven。手元に jar を置かずに済ませるため（2026-08-07）
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content { includeGroup "maven.modrinth" }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // Mixin のターゲット解決用。実行時は同梱しない（利用者が入れている本体に当てる）
+    // ⚠ 版番号 1.1.7.10 は fabric / neoforge / 1.21.1 とも同じ文字列なので、**版のIDで指す**。
+    //    u8YPiN39 = VanillaBackport-forge-1.20.1-1.1.7.10.jar（Modrinth API で確認）
+    compileOnly "maven.modrinth:vanillabackport:u8YPiN39"
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'   : 'vanillabackport_sulfurspread',
+            'Specification-Version' : '1',
+            'Implementation-Title'  : 'Vanilla Backport Sulfur Spread',
+            'Implementation-Version': project.version,
+            'MixinConfigs'          : 'sulfurspread.mixins.json'
+        ])
+    }
+}

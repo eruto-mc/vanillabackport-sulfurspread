@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.erutobusiness.sulfurspread.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "sulfurspread.refmap.json",
+  "mixins": [
+    "OverworldRegionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

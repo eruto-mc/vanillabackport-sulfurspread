@@ -1,0 +1,55 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+issueTrackerURL="https://github.com/erutobusiness"
+
+[[mixins]]
+config="sulfurspread.mixins.json"
+
+[[mods]]
+modId="sulfurspread"
+version="1.0.0"
+displayName="Vanilla Backport Sulfur Spread"
+authors="erutobusiness"
+description='''
+Widens the weirdness band that Vanilla Backport asks for when it registers Sulfur Caves.
+
+Vanilla Backport places the biome through TerraBlender with weirdness spanning -1.1 to -0.85.
+Only the part above -1.0 is reachable, so the biome asks for about 7.5% of the weirdness range,
+and it asks for erosion 5-6 and underground depth at the same time. On this pack's terrain
+(Terralith + Tectonic) that combination did not come up once: a 238,078 chunk survey of the
+club world found zero Sulfur Caves chunks, while Pale Garden - added the same way but with
+ordinary parameters - had 2,270.
+
+This mod widens that one span to -1.1 .. -0.45, which is the band the biome uses in the version
+being backported. Nothing else is touched: erosion, depth, continentalness, temperature and
+humidity keep the values Vanilla Backport chose, and no other biome registration is affected.
+'''
+
+[[dependencies.sulfurspread]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.sulfurspread]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.sulfurspread]]
+    modId="vanillabackport"
+    mandatory=true
+    versionRange="[1.1.7,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.sulfurspread]]
+    modId="terrablender"
+    mandatory=true
+    versionRange="[3,)"
+    ordering="AFTER"
+    side="BOTH"

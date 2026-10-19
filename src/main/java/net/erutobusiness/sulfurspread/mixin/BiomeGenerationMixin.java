@@ -9,18 +9,24 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 /**
  * Widens the one weirdness span Vanilla Backport asks for when it registers Sulfur Caves.
  *
- * <p>The original body, read out of {@code VanillaBackport-forge-1.20.1-1.1.7.10.jar}:
+ * <p>Since Vanilla Backport 1.2 the parameters live in a static field of {@code BiomeGeneration},
+ * built in its static initializer. Read out of {@code VanillaBackport-forge-1.20.1-1.2.jar}:
  *
  * <pre>
- * addSulfurCaves(VanillaParameterOverlayBuilder):
- *   temperature      FULL_RANGE
- *   humidity         FULL_RANGE
- *   continentalness  Continentalness.span(COAST, INLAND)
- *   erosion          Erosion.span(EROSION_5, EROSION_6)
- *   depth            UNDERGROUND
- *   weirdness        Climate.Parameter.span(-1.1F, -0.85F)   &lt;- the only Climate$Parameter.span here
- *   -&gt; builder.add(point, ModBiomes.SULFUR_CAVES)
+ * BiomeGeneration.&lt;clinit&gt;:
+ *   SULFUR_CAVES = Pair.of(
+ *     temperature      Temperature.FULL_RANGE
+ *     humidity         Humidity.FULL_RANGE
+ *     continentalness  Continentalness.span(COAST, INLAND)
+ *     erosion          Erosion.span(EROSION_5, EROSION_6)
+ *     depth            Depth.UNDERGROUND
+ *     weirdness        Climate.Parameter.span(-1.1F, -0.85F)   &lt;- the only Climate$Parameter.span in the class
+ *     -&gt; ModBiomes.SULFUR_CAVES)
  * </pre>
+ *
+ * <p>Up to 1.1.7.x the same span was built in
+ * {@code common.worldgen.biomes.terrablender.OverworldRegion.addSulfurCaves}; version 1.0.0 of this
+ * mod targets that method and is the one to use with those versions.
  *
  * <p><b>Why it needed changing.</b> Weirdness runs from -1 to 1, so the part of
  * {@code -1.1 .. -0.85} that a world can actually produce is {@code -1.0 .. -0.85} — about 7.5% of
@@ -34,18 +40,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
  * in the version being backported, so this widens toward upstream rather than to a number picked to
  * make the biome common. Every other parameter keeps the value Vanilla Backport chose.
  *
- * <p><b>Scope.</b> {@code method = "addSulfurCaves"} keeps the redirect inside that one method, and
- * it is the only {@code Climate$Parameter.span(FF)} call in it — the continentalness and erosion
- * spans go through {@code ParameterUtils$Continentalness} and {@code ParameterUtils$Erosion}, which
- * are different classes. {@code defaultRequire = 1} means that if a later Vanilla Backport rewrites
- * this method, the game fails to start instead of quietly leaving the biome ungeneratable again.
+ * <p><b>Scope.</b> {@code method = "<clinit>"} keeps the redirect inside the static initializer,
+ * and it is the only {@code Climate$Parameter.span(FF)} call in the whole class — the
+ * continentalness and erosion spans go through Platform's {@code Continentalness} and
+ * {@code Erosion}, which are different classes. {@code defaultRequire = 1} means that if a later
+ * Vanilla Backport moves this again, the game fails to start instead of quietly leaving the biome
+ * ungeneratable.
  */
-@Mixin(targets = "com.blackgear.vanillabackport.common.worldgen.biomes.terrablender.OverworldRegion",
+@Mixin(targets = "com.blackgear.vanillabackport.common.integrations.worldgen.BiomeGeneration",
        remap = false)
-public class OverworldRegionMixin {
+public class BiomeGenerationMixin {
 
     @Redirect(
-            method = "addSulfurCaves",
+            method = "<clinit>",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/biome/Climate$Parameter;"

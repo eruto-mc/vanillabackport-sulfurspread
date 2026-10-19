@@ -8,7 +8,7 @@ config="sulfurspread.mixins.json"
 
 [[mods]]
 modId="sulfurspread"
-version="1.0.0"
+version="1.1.0"
 displayName="Vanilla Backport Sulfur Spread"
 authors="erutobusiness"
 description='''
@@ -43,7 +43,7 @@ humidity keep the values Vanilla Backport chose, and no other biome registration
 [[dependencies.sulfurspread]]
     modId="vanillabackport"
     mandatory=true
-    versionRange="[1.1.7,)"
+    versionRange="[1.2,)"
     ordering="AFTER"
     side="BOTH"
 

@@ -4,7 +4,8 @@ Widens the one weirdness span [Vanilla Backport](https://modrinth.com/mod/vanill
 asks for when it registers Sulfur Caves, so the biome can actually turn up.
 
 - Minecraft 1.20.1 / Forge 47.x / Java 17
-- Requires: `vanillabackport` `[1.1.7,)`, `terrablender` `[3,)`
+- Requires: `vanillabackport` `[1.2,)`, `terrablender` `[3,)`
+  (for Vanilla Backport 1.1.7.x use version 1.0.0 of this mod)
 - Licence: MIT
 
 ## What was wrong
@@ -22,8 +23,9 @@ already `true`.
 
 ## What this does
 
-One `@Redirect`, on the single `Climate.Parameter.span(float, float)` call inside
-`OverworldRegion.addSulfurCaves`. It returns **-1.1 to -0.45** instead — the band the biome
+One `@Redirect`, on the single `Climate.Parameter.span(float, float)` call inside the static
+initializer of `BiomeGeneration` (Vanilla Backport 1.2 and later; up to 1.1.7.x the call was in
+`OverworldRegion.addSulfurCaves`, which version 1.0.0 targets). It returns **-1.1 to -0.45** instead — the band the biome
 uses in the version being backported, so this widens *toward* upstream rather than to a number
 picked to make the biome common.
 
@@ -37,14 +39,14 @@ values Vanilla Backport chose, and no other biome registration is affected.
 
 ## Notes for anyone changing this
 
-`method = "addSulfurCaves"` keeps the redirect inside that one method, and it is the only
-`Climate$Parameter.span(FF)` call in it — the continentalness and erosion spans go through
-`ParameterUtils$Continentalness` and `ParameterUtils$Erosion`, which are different classes.
+`method = "<clinit>"` keeps the redirect inside `BiomeGeneration`'s static initializer, and it is
+the only `Climate$Parameter.span(FF)` call in the whole class — the continentalness and erosion
+spans go through Platform's `Continentalness` and `Erosion`, which are different classes.
 
-`defaultRequire = 1` is deliberate: if a later Vanilla Backport rewrites that method, the game
-fails to start instead of quietly leaving the biome ungeneratable again.
+`defaultRequire = 1` is deliberate: if a later Vanilla Backport moves this again, the game
+fails to start instead of quietly leaving the biome ungeneratable.
 
 The Mixin annotation processor needs the target class on the compile classpath even with
 `targets = "..."`, so `build.gradle` pulls Vanilla Backport from the Modrinth maven. It pins the
-**version id** (`u8YPiN39`), not the version number — `1.1.7.10` is also the version number of
-the Fabric and 1.21.1 builds, so the number alone is ambiguous.
+**version id** (`1KjVIqrw` = Forge 1.20.1 build of 1.2), not the version number — the same
+number is used by the Fabric and 1.21.1 builds, so the number alone is ambiguous.

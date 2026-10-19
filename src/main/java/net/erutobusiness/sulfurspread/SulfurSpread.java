@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 /**
  * Vanilla Backport Sulfur Spread — a one-fix mod.
  *
- * <p>All of the work happens in {@code OverworldRegionMixin}; see that class for the measurement
+ * <p>All of the work happens in {@code BiomeGenerationMixin}; see that class for the measurement
  * and the reasoning.
  */
 @Mod(SulfurSpread.MOD_ID)

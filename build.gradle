@@ -14,7 +14,7 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.0.0'
+version = '1.1.0'
 group = 'net.erutobusiness'
 base { archivesName = 'vanillabackport_sulfurspread' }
 
@@ -46,9 +46,10 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.3.0'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // Mixin のターゲット解決用。実行時は同梱しない（利用者が入れている本体に当てる）
-    // ⚠ 版番号 1.1.7.10 は fabric / neoforge / 1.21.1 とも同じ文字列なので、**版のIDで指す**。
-    //    u8YPiN39 = VanillaBackport-forge-1.20.1-1.1.7.10.jar（Modrinth API で確認）
-    compileOnly "maven.modrinth:vanillabackport:u8YPiN39"
+    // ⚠ バージョン番号は fabric / neoforge / 1.21.1 とも同じ文字列なので、**Modrinth のバージョン ID で指す**。
+    //    1KjVIqrw = VanillaBackport-forge-1.20.1-1.2.jar（Modrinth API で確認・2026-10-19）
+    //    （1.1.7.x 向けの 1.0.0 は u8YPiN39 = VanillaBackport-forge-1.20.1-1.1.7.10.jar で作った）
+    compileOnly "maven.modrinth:vanillabackport:1KjVIqrw"
 }
 
 jar {
